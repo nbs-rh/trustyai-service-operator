@@ -600,6 +600,7 @@ func (r *EvalHubReconciler) reconcileProviderConfigMaps(ctx context.Context, ins
 		if getErr != nil && !errors.IsNotFound(getErr) {
 			return nil, getErr
 		}
+		syncProviderInternalOnlyMetadata(configMap, src)
 
 		if errors.IsNotFound(getErr) {
 			configMap.Data = src.Data
@@ -624,6 +625,25 @@ func (r *EvalHubReconciler) reconcileProviderConfigMaps(ctx context.Context, ins
 	}
 
 	return cmNames, nil
+}
+
+func syncProviderInternalOnlyMetadata(target, source *corev1.ConfigMap) {
+	if source.Labels[providerInternalOnlyLabel] == "true" {
+		if target.Labels == nil {
+			target.Labels = make(map[string]string)
+		}
+		target.Labels[providerInternalOnlyLabel] = "true"
+	} else {
+		delete(target.Labels, providerInternalOnlyLabel)
+	}
+	if source.Annotations[providerInternalOnlyAnnotation] == "true" {
+		if target.Annotations == nil {
+			target.Annotations = make(map[string]string)
+		}
+		target.Annotations[providerInternalOnlyAnnotation] = "true"
+	} else {
+		delete(target.Annotations, providerInternalOnlyAnnotation)
+	}
 }
 
 // reconcileCollectionConfigMaps copies collection ConfigMaps from the operator namespace to the

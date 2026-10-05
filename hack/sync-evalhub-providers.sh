@@ -20,6 +20,8 @@ OUTPUT_DIR="config/configmaps/evalhub"
 
 PROVIDER_TYPE_LABEL="trustyai.opendatahub.io/evalhub-provider-type"
 PROVIDER_NAME_LABEL="trustyai.opendatahub.io/evalhub-provider-name"
+PROVIDER_INTERNAL_ONLY_LABEL="trustyai.opendatahub.io/evalhub-provider-internal-only"
+PROVIDER_INTERNAL_ONLY_ANNOTATION="trustyai.opendatahub.io/internal-only"
 COLLECTION_TYPE_LABEL="trustyai.opendatahub.io/evalhub-collection-type"
 COLLECTION_NAME_LABEL="trustyai.opendatahub.io/evalhub-collection-name"
 
@@ -86,6 +88,13 @@ process_provider() {
 
     local original_image
     original_image="$(echo "$content" | yq -r '.runtime.k8s.image // ""')"
+    local internal_only_label=""
+    local internal_only_annotation=""
+    if [[ "$(echo "$content" | yq -r '.internal_only // false')" == "true" ]]; then
+        internal_only_label="    ${PROVIDER_INTERNAL_ONLY_LABEL}: \"true\""
+        internal_only_annotation="  annotations:
+    ${PROVIDER_INTERNAL_ONLY_ANNOTATION}: \"true\""
+    fi
 
     local provider_yaml="$content"
     if [[ -n "$original_image" ]]; then
@@ -103,6 +112,8 @@ metadata:
   labels:
     ${PROVIDER_TYPE_LABEL}: system
     ${PROVIDER_NAME_LABEL}: ${safe_id}
+${internal_only_label}
+${internal_only_annotation}
 data:
   ${filename}: |
 ${indented}

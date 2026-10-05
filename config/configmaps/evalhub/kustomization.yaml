@@ -6,6 +6,7 @@ resources:
   - provider-ibm-clear.yaml
   - provider-ifbench.yaml
   - provider-inspect.yaml
+  - provider-evalhub-internal.yaml
   - provider-lighteval.yaml
   - provider-lm-evaluation-harness.yaml
   - provider-nemo-guardrails.yaml

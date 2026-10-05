@@ -94,10 +94,12 @@ const (
 	configDirPath = "/etc/evalhub/config"
 
 	// Provider ConfigMap configuration
-	providerLabel       = "trustyai.opendatahub.io/evalhub-provider-type"
-	providerNameLabel   = "trustyai.opendatahub.io/evalhub-provider-name"
-	providersVolumeName = "evalhub-providers"
-	providersMountPath  = configDirPath + "/providers"
+	providerLabel                  = "trustyai.opendatahub.io/evalhub-provider-type"
+	providerNameLabel              = "trustyai.opendatahub.io/evalhub-provider-name"
+	providerInternalOnlyLabel      = "trustyai.opendatahub.io/evalhub-provider-internal-only"
+	providerInternalOnlyAnnotation = "trustyai.opendatahub.io/internal-only"
+	providersVolumeName            = "evalhub-providers"
+	providersMountPath             = configDirPath + "/providers"
 
 	// Sidecar configuration
 	sidecarBaseURL = "http://localhost:8080"

@@ -1724,9 +1724,11 @@ func TestEvalHubReconciler_reconcileProviderConfigMaps(t *testing.T) {
 			Name:      "trustyai-service-operator-evalhub-provider-testprovider",
 			Namespace: operatorNamespace,
 			Labels: map[string]string{
-				providerLabel:     "system",
-				providerNameLabel: "testprovider",
+				providerLabel:             "system",
+				providerNameLabel:         "testprovider",
+				providerInternalOnlyLabel: "true",
 			},
+			Annotations: map[string]string{providerInternalOnlyAnnotation: "true"},
 		},
 		Data: map[string]string{
 			"testprovider.yaml": "id: testprovider\nname: Test Provider\nruntime:\n  k8s:\n    image: quay.io/test/provider:latest\n",
@@ -1771,6 +1773,8 @@ func TestEvalHubReconciler_reconcileProviderConfigMaps(t *testing.T) {
 		}, copiedCM)
 		require.NoError(t, err)
 		assert.Equal(t, sourceProvider.Data["testprovider.yaml"], copiedCM.Data["testprovider.yaml"])
+		assert.Equal(t, "true", copiedCM.Labels[providerInternalOnlyLabel])
+		assert.Equal(t, "true", copiedCM.Annotations[providerInternalOnlyAnnotation])
 	})
 
 	t.Run("should return nil when no providers specified", func(t *testing.T) {
